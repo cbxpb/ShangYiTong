@@ -4,15 +4,13 @@
     <HospitalTop />
     <!-- 路由组件 -->
     <div class="content">
-      xxxx
+      <router-view></router-view>
     </div>
     <!-- 底部全局组件 -->
     <HospitalBottom />
   </div>
 </template>
-<script setup lang="ts">
-
-</script>
+<script setup lang="ts"></script>
 <style lang="scss" scoped>
   .container {
     display: flex;
@@ -25,6 +23,4 @@
       min-height: 700px;
     }
   }
-
-
 </style>
