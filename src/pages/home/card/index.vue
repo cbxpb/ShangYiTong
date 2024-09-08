@@ -1,5 +1,5 @@
 <template>
-  <el-card shadow="hover">
+  <el-card class="card" shadow="hover" @click="goDetail">
     <div class="content">
       <!-- 左侧 -->
       <div class="left">
@@ -46,39 +46,54 @@
       </div>
       <!-- 右侧 -->
       <div class="right">
-        <img :src="`data:image/jpeg;base64,${hospitalArr.logoData}`" alt="logo" />
+        <img
+          :src="`data:image/jpeg;base64,${hospitalArr.logoData}`"
+          alt="医院图片"
+        />
       </div>
     </div>
   </el-card>
 </template>
 <script setup lang="ts">
-  defineProps(["hospitalArr"])
+  import { useRouter } from "vue-router"
+  //获取路由器对象
+  const $router = useRouter()
+  const props = defineProps(["hospitalArr"])
+  //点击医院卡片的时候跳转到医院详情页面
+  const goDetail = () => {
+    $router.push({
+      path: "/hospital",
+    })
+  }
 </script>
 <style lang="scss" scoped>
-  .content {
-    display: flex;
-    justify-content: space-between;
-    .left {
-      width: 60%;
-      .tip {
-        color: #7f7f7f;
-        margin-top: 20px;
-        display: flex;
-        justify-content: space-between;
-        .level,
-        .time {
+  .card {
+    cursor: pointer;
+    .content {
+      display: flex;
+      justify-content: space-between;
+      .left {
+        width: 60%;
+        .tip {
+          color: #7f7f7f;
+          margin-top: 20px;
           display: flex;
-          align-items: center;
-          span {
-            margin-left: 5px;
+          justify-content: space-between;
+          .level,
+          .time {
+            display: flex;
+            align-items: center;
+            span {
+              margin-left: 5px;
+            }
           }
         }
       }
-    }
-    .right {
-      img {
-        width: 50px;
-        height: 50px;
+      .right {
+        img {
+          width: 50px;
+          height: 50px;
+        }
       }
     }
   }

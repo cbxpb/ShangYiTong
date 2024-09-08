@@ -37,7 +37,6 @@ export interface Hospital {
 }
 // 存储全部医院的ts类型
 export type Content = Hospital[]
-
 // 获取已有医院接口返回的数据ts类型
 export interface HospitalResponseData extends ResponseData {
   data: {
@@ -88,4 +87,9 @@ export type HospitalLevelAndRegionArr = HospitalLevelAndRegion[]
 // 获取医院等级或地区接口返回的数据ts类型
 export interface HospitalLevelAndRegionResponseData extends ResponseData {
   data: HospitalLevelAndRegionArr
+}
+
+// 根据医院名称获取医院列表接口返回的数据ts类型
+export interface HospitalByNameResponseData extends ResponseData {
+  data: Content
 }
