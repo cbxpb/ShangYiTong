@@ -41,7 +41,7 @@
         />
       </el-col>
       <!-- 右侧 -->
-      <el-col :span="4"> 123 </el-col>
+      <el-col :span="4"> <Tip></Tip> </el-col>
     </el-row>
   </div>
 </template>
@@ -56,6 +56,8 @@
   import Region from "./region/index.vue"
   // 引入医院信息卡片子组件
   import Card from "./card/index.vue"
+  // 引入右侧组件
+  import Tip from "./tip/index.vue"
   // 数据类型
   import type { HospitalResponseData, Content } from "@/api/type"
   // 引入 Vue 组合式API的函数
