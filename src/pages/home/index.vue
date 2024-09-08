@@ -9,18 +9,25 @@
       <!-- 左侧 -->
       <el-col :span="20">
         <!-- 医院等级子组件 -->
-        <Level></Level>
+        <Level @getLevel="getLevel"></Level>
         <!-- 医院地区子组件 -->
-        <Region></Region>
+        <Region @getRegion="getRegion"></Region>
         <!-- 医院信息卡片子组件 -->
-        <div class="cards">
-          <Card
-            class="item"
-            v-for="(item, index) in hospitalArr"
-            :key="item.cityCode"
-            :hospitalArr="item"
-          ></Card>
-        </div>
+        <!-- 有数据 -->
+        <template v-if="hospitalArr.length > 0">
+          <div class="cards">
+            <Card
+              class="item"
+              v-for="item in hospitalArr"
+              :key="item.cityCode"
+              :hospitalArr="item"
+            ></Card>
+          </div>
+        </template>
+        <!-- 没数据 -->
+        <template v-else>
+          <el-empty description="暂无数据！" />
+        </template>
         <!-- 底部分页器 -->
         <el-pagination
           v-model:current-page="pageNum"
@@ -63,6 +70,10 @@
   const hospitalArr = ref<Content>([])
   // 存储医院总数
   const total = ref<number>(0)
+  //存储医院的等级相应数据
+  const hostype = ref<string>("")
+  //存储医院的地区
+  const districtCode = ref<string>("")
 
   // 组件挂载后执行
   onMounted(() => {
@@ -73,7 +84,9 @@
     // 获取医院的数据：默认页码为1，每页条数为10
     const res: HospitalResponseData = await reqHospital(
       pageNum.value,
-      pageSize.value
+      pageSize.value,
+      hostype.value,
+      districtCode.value
     )
     if (res.code === 200) {
       // 医院数据
@@ -90,6 +103,17 @@
   // 每页条数改变时触发
   const sizeChange = () => {
     pageNum.value = 1
+    getHospitalInfo()
+  }
+
+  // 自定义事件：获取医院等级
+  const getLevel = (level: string) => {
+    hostype.value = level
+    getHospitalInfo()
+  }
+  // 自定义事件：获取医院地区
+  const getRegion = (region: string) => {
+    districtCode.value = region
     getHospitalInfo()
   }
 </script>
