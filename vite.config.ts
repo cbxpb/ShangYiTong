@@ -21,4 +21,13 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   } */
+  // 配置代理服务器
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://syt.atguigu.cn',
+        changeOrigin: true,
+      }
+    }
+  }
 })

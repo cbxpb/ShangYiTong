@@ -14,7 +14,12 @@
         <Region></Region>
         <!-- 医院信息卡片子组件 -->
         <div class="cards">
-          <Card class="item" v-for="item in 10" :key="item"></Card>
+          <Card
+            class="item"
+            v-for="(item, index) in hospitalArr"
+            :key="item.cityCode"
+            :hospitalArr="item"
+          ></Card>
         </div>
         <!-- 底部分页器 -->
         <el-pagination
@@ -23,7 +28,9 @@
           :page-sizes="[10, 20, 30, 40]"
           :background="true"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="40"
+          :total="total"
+          @current-change="currentChange"
+          @size-change="sizeChange"
         />
       </el-col>
       <!-- 右侧 -->
@@ -42,13 +49,49 @@
   import Region from "./region/index.vue"
   // 引入医院信息卡片子组件
   import Card from "./card/index.vue"
-
+  // 数据类型
+  import type { HospitalResponseData, Content } from "@/api/type"
   // 引入 Vue 组合式API的函数
-  import { ref } from "vue"
+  import { onMounted, ref } from "vue"
+  // 引入接口API
+  import { reqHospital } from "@/api/home"
   // 分页器需要的数据
   // pageNum --> 页码 | pageSize --> 每页条数
   const pageNum = ref<number>(1)
   const pageSize = ref<number>(10)
+  // 存储已有的医院数据
+  const hospitalArr = ref<Content>([])
+  // 存储医院总数
+  const total = ref<number>(0)
+
+  // 组件挂载后执行
+  onMounted(() => {
+    getHospitalInfo()
+  })
+  // 获取医院数据
+  const getHospitalInfo = async () => {
+    // 获取医院的数据：默认页码为1，每页条数为10
+    const res: HospitalResponseData = await reqHospital(
+      pageNum.value,
+      pageSize.value
+    )
+    if (res.code === 200) {
+      // 医院数据
+      hospitalArr.value = res.data.content
+      // 医院总数
+      total.value = res.data.totalElements
+    }
+  }
+
+  // 分页器改变时触发
+  const currentChange = () => {
+    getHospitalInfo()
+  }
+  // 每页条数改变时触发
+  const sizeChange = () => {
+    pageNum.value = 1
+    getHospitalInfo()
+  }
 </script>
 <style lang="scss" scoped>
   .cards {

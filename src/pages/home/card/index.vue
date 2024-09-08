@@ -3,7 +3,7 @@
     <div class="content">
       <!-- 左侧 -->
       <div class="left">
-        <div class="hospital_name">北京医院</div>
+        <div class="hospital_name">{{ hospitalArr.hosname }}</div>
         <div class="tip">
           <div class="level">
             <svg
@@ -21,7 +21,7 @@
                 p-id="1616"
               ></path>
             </svg>
-            <span>三级甲等</span>
+            <span>{{ hospitalArr.param.hostypeString }}</span>
           </div>
           <div class="time">
             <svg
@@ -40,18 +40,20 @@
                 p-id="2595"
               ></path>
             </svg>
-            <span>2024</span>
+            <span>每天{{ hospitalArr.bookingRule?.releaseTime }}放号</span>
           </div>
         </div>
       </div>
       <!-- 右侧 -->
       <div class="right">
-        <img src="../../../assets/images/logo.png" alt="logo" />
+        <img :src="`data:image/jpeg;base64,${hospitalArr.logoData}`" alt="logo" />
       </div>
     </div>
   </el-card>
 </template>
-<script setup lang="ts"></script>
+<script setup lang="ts">
+  defineProps(["hospitalArr"])
+</script>
 <style lang="scss" scoped>
   .content {
     display: flex;
