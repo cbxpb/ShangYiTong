@@ -56,13 +56,19 @@
 </template>
 <script setup lang="ts">
   import { useRouter } from "vue-router"
+  import type { Hospital } from "@/api/type"
   //获取路由器对象
   const $router = useRouter()
-  const props = defineProps(["hospitalArr"])
+  const props = defineProps<{
+    hospitalArr: Hospital
+  }>()
   //点击医院卡片的时候跳转到医院详情页面
   const goDetail = () => {
     $router.push({
-      path: "/hospital",
+      path: "/hospital/reservation",
+      query: {
+        hoscode: props.hospitalArr.hoscode,
+      },
     })
   }
 </script>

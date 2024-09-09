@@ -45,10 +45,13 @@
     }
   }
   //点击某一个推荐项
-  const goDetail = () => {
+  const goDetail = (item: showData) => {
     //点击推荐项目进入医院详情页
     $router.push({
-      path: "/hospital",
+      path: "/hospital/reservation",
+      query: {
+        hoscode: item.hoscode,
+      },
     })
   }
 </script>

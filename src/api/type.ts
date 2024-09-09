@@ -1,10 +1,10 @@
-// 定义首页模块数据的基础ts类型
+// 定义接口返回数据的基础ts类型
 export interface ResponseData {
   code: number,
   message: string,
   ok: boolean
 }
-
+/* ------------------------------------------------home页面数据的ts类型------------------------------------------------ */
 // 代表已有的医院数据的ts类型
 export interface Hospital {
   id: string,
@@ -27,7 +27,7 @@ export interface Hospital {
   route: string,
   status: number,
   bookingRule: {
-    cycle: number;
+    cycle: number,
     releaseTime: string,
     stopTime: string,
     quitDay: number,
@@ -92,4 +92,44 @@ export interface HospitalLevelAndRegionResponseData extends ResponseData {
 // 根据医院名称获取医院列表接口返回的数据ts类型
 export interface HospitalByNameResponseData extends ResponseData {
   data: Content
+}
+
+/* ------------------------------------------------hospital页面数据的ts类型------------------------------------------------ */
+// 代表医院详情信息数据的ts类型
+export interface HospitalInfo {
+  bookingRule: {
+    cycle: number,
+    releaseTime: string,
+    stopTime: string,
+    quitDay: number,
+    quitTime: string,
+    rule: Array<string>
+  },
+  hospital: {
+    id: string,
+    createTime: string,
+    updateTime: string,
+    isDeleted: number,
+    param: {
+      hostypeString: string,
+      fullAddress: string,
+    },
+    hoscode: string,
+    hosname: string,
+    hostype: string,
+    provinceCode: string,
+    cityCode: string,
+    districtCode: string,
+    address: string,
+    logoData: string,
+    intro: string,
+    route: string,
+    status: number,
+    bookingRule: null,
+  }
+}
+
+//医院详情信息接口返回的数据ts类型
+export interface HospitalInfoResponseData extends ResponseData {
+  data: HospitalInfo
 }

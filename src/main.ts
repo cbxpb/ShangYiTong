@@ -14,6 +14,8 @@ import ElementPlus from 'element-plus'
 // 引入中文语言包
 import zhCn from 'element-plus/es/locale/lang/zh-cn' 
 import 'element-plus/dist/index.css'
+// 引入 pinia 仓库
+import { createPinia } from 'pinia'
 // 利用 createApp 方法创建一个应用实例，且将应用实例挂载到 #app 这个节点上
 const app = createApp(App)
 // 全局注册组件
@@ -25,4 +27,6 @@ app.use(router)
 app.use(ElementPlus,{
     locale: zhCn
 })
+// 使用 pinia
+app.use(createPinia())
 app.mount('#app')
