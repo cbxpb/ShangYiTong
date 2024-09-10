@@ -6,9 +6,10 @@ import router from '@/router'
 import '@/style/reset.scss'
 // 引入App组件
 import App from './App.vue'
-// 引入全局组件 -- 顶部、底部
+// 引入全局组件 -- 顶部、底部、登录
 import HospitalTop from '@/components/hospital_top/index.vue'
 import HospitalBottom from '@/components/hospital_bottom/index.vue'
+import Login from '@/components/login/index.vue'
 // 引入 Element Plus (全局引入)
 import ElementPlus from 'element-plus'
 // 引入中文语言包
@@ -21,6 +22,7 @@ const app = createApp(App)
 // 全局注册组件
 app.component('HospitalTop', HospitalTop)
 app.component('HospitalBottom', HospitalBottom)
+app.component('Login', Login)
 // 使用路由
 app.use(router)
 // 使用 Element Plus

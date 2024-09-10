@@ -91,7 +91,11 @@
           <h1 ref="cur">{{ deparment.depname }}</h1>
           <!-- 每一个大的科室下小科室 -->
           <ul>
-            <li v-for="item in deparment.children" :key="item.depcode">
+            <li
+              v-for="item in deparment.children"
+              :key="item.depcode"
+              @click="showLogin()"
+            >
               {{ item.depname }}
             </li>
           </ul>
@@ -105,7 +109,10 @@
   // import { useRouter, useRoute } from "vue-router"
   //引入医院详情仓库的数据
   import { useHospitalInfoStore } from "@/store/hospitalInfo"
+  import { useUserStore } from "@/store/user"
   const hospitalInfoStore = useHospitalInfoStore()
+  const userStore = useUserStore()
+
   // 高亮导航的索引值
   const currentIndex = ref<number>(0)
   // 获取所以h1的dom元素
@@ -115,6 +122,10 @@
     currentIndex.value = index
     // 滚动到指定位置
     cur.value[currentIndex.value].scrollIntoView({ behavior: "smooth" })
+  }
+  // 控制登录框的显示与隐藏
+  const showLogin = () => {
+    userStore.visiable = true
   }
 </script>
 <style scoped lang="scss">

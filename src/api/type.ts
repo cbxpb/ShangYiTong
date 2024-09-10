@@ -148,3 +148,25 @@ export type DeparmentArr = Deparment[]
 export interface DeparmentResponseData extends ResponseData {
   data: DeparmentArr
 }
+
+
+/* ------------------------------------------------用户登录相关接口------------------------------------------------ */
+// 验证码接口返回的数据ts类型
+export interface CodeResponseData extends ResponseData {
+  data: string | null
+}
+
+// 登录接口需要携带参数ts类型
+export interface LoginData {
+  phone: string,
+  code: string
+}
+// 登录接口返回用户信息数据ts类型
+export interface UserInfo {
+  name: string,
+  token: string
+}
+// 登录接口返回的数据ts类型
+export interface LoginResponseData extends ResponseData {
+  data: UserInfo
+}

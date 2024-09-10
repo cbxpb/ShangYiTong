@@ -8,6 +8,8 @@
     </div>
     <!-- 底部全局组件 -->
     <HospitalBottom />
+    <!-- 登录组件 -->
+    <Login />
   </div>
 </template>
 <script setup lang="ts"></script>
