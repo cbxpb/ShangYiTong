@@ -129,7 +129,22 @@ export interface HospitalInfo {
   }
 }
 
-//医院详情信息接口返回的数据ts类型
+// 医院详情信息接口返回的数据ts类型
 export interface HospitalInfoResponseData extends ResponseData {
   data: HospitalInfo
+}
+
+// 代表医院科室数据的ts类型
+export interface Deparment {
+  depcode: string,
+  depname: string,
+  children?: Deparment[]
+}
+
+// 存储全部科室数据的ts类型
+export type DeparmentArr = Deparment[]
+
+// 医院科室接口返回的数据ts类型
+export interface DeparmentResponseData extends ResponseData {
+  data: DeparmentArr
 }

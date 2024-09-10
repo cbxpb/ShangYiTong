@@ -68,14 +68,54 @@
       </div>
     </div>
     <!-- 放置每一个医院的科室的数据 -->
+    <div class="deparment">
+      <div class="leftNav">
+        <ul>
+          <li
+            v-for="(deparment, index) in hospitalInfoStore.departmentList"
+            :key="deparment.depcode"
+            :class="{ active: currentIndex === index }"
+            @click="changeIndex(index)"
+          >
+            {{ deparment.depname }}
+          </li>
+        </ul>
+      </div>
+      <div class="deparmentInfo">
+        <!-- 用一个div代表:大科室与小科室 -->
+        <div
+          class="showDeparment"
+          v-for="deparment in hospitalInfoStore.departmentList"
+          :key="deparment.depcode"
+        >
+          <h1 ref="cur">{{ deparment.depname }}</h1>
+          <!-- 每一个大的科室下小科室 -->
+          <ul>
+            <li v-for="item in deparment.children" :key="item.depcode">
+              {{ item.depname }}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 <script setup lang="ts">
-  // import { ref } from "vue"
+  import { ref } from "vue"
   // import { useRouter, useRoute } from "vue-router"
   //引入医院详情仓库的数据
   import { useHospitalInfoStore } from "@/store/hospitalInfo"
   const hospitalInfoStore = useHospitalInfoStore()
+  // 高亮导航的索引值
+  const currentIndex = ref<number>(0)
+  // 获取所以h1的dom元素
+  const cur = ref<HTMLDivElement[]>([])
+  // 改变索引值并滚动位置
+  const changeIndex = (index: number) => {
+    currentIndex.value = index
+    // 滚动到指定位置
+    cur.value[currentIndex.value].scrollIntoView({ behavior: "smooth" })
+  }
 </script>
 <style scoped lang="scss">
   .register {
@@ -139,6 +179,7 @@
           display: flex;
           flex-direction: column;
           li {
+            cursor: pointer;
             flex: 1;
             text-align: center;
             color: #7f7f7f;
@@ -153,6 +194,7 @@
         }
       }
       .deparmentInfo {
+        overscroll-behavior: contain;
         flex: 1;
         margin-left: 20px;
         height: 100%;
@@ -169,6 +211,7 @@
             display: flex;
             flex-wrap: wrap;
             li {
+              cursor: pointer;
               color: #7f7f7f;
               width: 33%;
               line-height: 30px;

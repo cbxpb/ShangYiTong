@@ -86,6 +86,7 @@
     } else {
       console.log("重新获取", hoscode)
       hospitalInfoStore.getHospitalInfo(hoscode)
+      hospitalInfoStore.getDeparment(hoscode)
     }
   })
 </script>
