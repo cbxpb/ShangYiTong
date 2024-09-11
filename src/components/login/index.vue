@@ -1,13 +1,17 @@
 <template>
   <div class="login-container">
-    <el-dialog v-model="userStore.visiable" title="用户登录">
+    <el-dialog
+      v-model="userStore.visiable"
+      title="用户登录"
+      @close="closeDialog"
+    >
       <!-- 对话框结构 -->
       <el-row>
         <!-- 左侧结构:手机号码登录、微信扫一扫登录 -->
         <el-col :span="12">
           <div class="login">
             <div v-show="scene === 0">
-              <el-form :model="loginParam">
+              <el-form :model="loginParam" :rules="rules" ref="form">
                 <el-form-item prop="phone">
                   <el-input
                     placeholder="请输入手机号码"
@@ -149,6 +153,8 @@
   })
   //定义一个响应式数据控制倒计时组件显示与隐藏
   const flag = ref<boolean>(false) //flag如果为真,开启倒计时
+  //获取form组件实例
+  const form = ref<any>()
   // 切换手机登录或者微信登录界面
   const changeScene = () => {
     scene.value = scene.value === 0 ? 1 : 0
@@ -156,6 +162,7 @@
   //关闭窗口按钮的回调
   const closeDialog = () => {
     userStore.visiable = false
+    form.value.resetFields()
   }
   // 计算出当前表单元素收集的内容是否为手机号码格式
   const isPhone = computed(() => {
@@ -186,9 +193,11 @@
     }
   }
   // 手机号码登录回调
-  const login = () => {
+  const login = async () => {
     try {
-      userStore.userLogin(loginParam.value)
+      //保证表单校验两项都符合条件
+      await form.value.validate()
+      await userStore.userLogin(loginParam.value)
       closeDialog()
     } catch (error) {
       ElMessage({
@@ -196,6 +205,36 @@
         message: (error as Error).message,
       })
     }
+  }
+  //自定义校验规则:手机号码自定义校验规则
+  const validatorPhone = (rule: any, value: any, callBack: any) => {
+    //rule:即为表单校验规则对象
+    //value:即为当前文本的内容
+    //callBack:回调函数
+    const reg =
+      /^1((34[0-8])|(8\d{2})|(([35][0-35-9]|4[579]|66|7[35678]|9[1389])\d{1}))\d{7}$/
+    if (reg.test(value)) {
+      callBack()
+    } else {
+      callBack(new Error("请输入正确的手机号码格式"))
+    }
+  }
+  //验证码自定义校验规则
+  const validatorCode = (rule: any, value: any, callBack: any) => {
+    //rule:即为表单校验规则对象
+    //value:即为当前文本的内容
+    //callBack:回调函数
+    if (/^\d{6}$/.test(value)) {
+      callBack()
+    } else {
+      callBack(new Error("请输入正确的验证码格式"))
+    }
+  }
+  //表单校验的规则对象
+  const rules = {
+    //手机号码校验规则
+    phone: [{ trigger: "change", validator: validatorPhone }],
+    code: [{ trigger: "change", validator: validatorCode }],
   }
 </script>
 

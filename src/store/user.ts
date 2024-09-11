@@ -2,7 +2,7 @@ import { defineStore } from "pinia"
 import { ref } from "vue"
 import { reqSendCode, reqLogin } from '@/api/hospital'
 import { CodeResponseData, LoginData, LoginResponseData, UserInfo } from '@/api/type'
-import { GET_TOKEN, SET_TOKEN } from "@/utils/user"
+import { GET_TOKEN, SET_TOKEN, REMOVE_TOKEN } from "@/utils/user"
 
 export const useUserStore = defineStore('user', () => {
   // 控制用户登录弹窗的显示与隐藏
@@ -35,11 +35,17 @@ export const useUserStore = defineStore('user', () => {
       return Promise.reject(new Error(res.message))
     }
   }
+  // 退出登录
+  const logout = () => {
+    userInfo.value = { name: '', token: '' }
+    REMOVE_TOKEN()
+  }
   return {
     visiable,
     code,
     userInfo,
     getCode,
-    userLogin
+    userLogin,
+    logout
   }
 })
