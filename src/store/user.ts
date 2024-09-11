@@ -40,12 +40,26 @@ export const useUserStore = defineStore('user', () => {
     userInfo.value = { name: '', token: '' }
     REMOVE_TOKEN()
   }
+  //查询微信扫码的接口(看本地存储是否存储数据)
+  const queryState = () => {
+    //开启定时器每隔一段时间问:本地是否拥有用户信息
+    let timer = setInterval(() => {
+      //本地存储已有数据:扫码成功
+      if (GET_TOKEN()) {
+        //关闭对话框
+        visiable.value = false;
+        userInfo.value = JSON.parse(GET_TOKEN() as string);
+        clearInterval(timer);
+      }
+    }, 1000);
+  }
   return {
     visiable,
     code,
     userInfo,
     getCode,
     userLogin,
-    logout
+    logout,
+    queryState
   }
 })

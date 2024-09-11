@@ -70,7 +70,29 @@
                 </svg>
               </div>
             </div>
-            <div class="webchat" v-show="scene === 1">微信扫码登录</div>
+            <div class="webchat" v-show="scene == 1">
+              <!-- 在这个容器当中显示微信扫码登录页面 -->
+              <div id="login_container"></div>
+              <div class="phone">
+                <p @click="scene = 0">手机短信验证码登录</p>
+                <svg
+                  @click="scene = 0"
+                  t="1685676069573"
+                  class="icon"
+                  viewBox="0 0 1024 1024"
+                  version="1.1"
+                  xmlns="http://www.w3.org/2000/svg"
+                  p-id="2476"
+                  width="16"
+                  height="16"
+                >
+                  <path
+                    d="M820.409449 797.228346q0 25.19685-10.07874 46.866142t-27.716535 38.299213-41.322835 26.204724-50.897638 9.574803l-357.795276 0q-27.212598 0-50.897638-9.574803t-41.322835-26.204724-27.716535-38.299213-10.07874-46.866142l0-675.275591q0-25.19685 10.07874-47.370079t27.716535-38.80315 41.322835-26.204724 50.897638-9.574803l357.795276 0q27.212598 0 50.897638 9.574803t41.322835 26.204724 27.716535 38.80315 10.07874 47.370079l0 675.275591zM738.771654 170.330709l-455.559055 0 0 577.511811 455.559055 0 0-577.511811zM510.992126 776.062992q-21.165354 0-36.787402 15.11811t-15.622047 37.291339q0 21.165354 15.622047 36.787402t36.787402 15.622047q22.173228 0 37.291339-15.622047t15.11811-36.787402q0-22.173228-15.11811-37.291339t-37.291339-15.11811zM591.622047 84.661417q0-8.062992-5.03937-12.598425t-11.086614-4.535433l-128 0q-5.03937 0-10.582677 4.535433t-5.543307 12.598425 5.03937 12.598425 11.086614 4.535433l128 0q6.047244 0 11.086614-4.535433t5.03937-12.598425z"
+                    p-id="2477"
+                  ></path>
+                </svg>
+              </div>
+            </div>
           </div>
         </el-col>
         <!-- 右侧结构 -->
@@ -139,12 +161,14 @@
   </div>
 </template>
 <script lang="ts" setup>
+  //引入wx扫码登录参数请求
+  import { reqWxLogin } from "@/api/hospital"
   import { useUserStore } from "@/store/user"
   import { User, Lock } from "@element-plus/icons-vue"
-  import { ref, computed } from "vue"
+  import { ref, computed, watch } from "vue"
   import { ElMessage } from "element-plus"
   import CountDown from "./count_down/index.vue"
-  import { LoginData } from "@/api/type"
+  import { LoginData, WXLoginResponseData } from "@/api/type"
   const userStore = useUserStore()
   const scene = ref<number>(0) //0代表收集号码登录  如果是1 微信扫码登录
   const loginParam = ref<LoginData>({
@@ -155,13 +179,10 @@
   const flag = ref<boolean>(false) //flag如果为真,开启倒计时
   //获取form组件实例
   const form = ref<any>()
-  // 切换手机登录或者微信登录界面
-  const changeScene = () => {
-    scene.value = scene.value === 0 ? 1 : 0
-  }
   //关闭窗口按钮的回调
   const closeDialog = () => {
     userStore.visiable = false
+    scene.value = 0
     form.value.resetFields()
   }
   // 计算出当前表单元素收集的内容是否为手机号码格式
@@ -207,7 +228,7 @@
     }
   }
   //自定义校验规则:手机号码自定义校验规则
-  const validatorPhone = (rule: any, value: any, callBack: any) => {
+  const validatorPhone = (_rule: any, value: any, callBack: any) => {
     //rule:即为表单校验规则对象
     //value:即为当前文本的内容
     //callBack:回调函数
@@ -220,7 +241,7 @@
     }
   }
   //验证码自定义校验规则
-  const validatorCode = (rule: any, value: any, callBack: any) => {
+  const validatorCode = (_rule: any, value: any, callBack: any) => {
     //rule:即为表单校验规则对象
     //value:即为当前文本的内容
     //callBack:回调函数
@@ -236,6 +257,33 @@
     phone: [{ trigger: "change", validator: validatorPhone }],
     code: [{ trigger: "change", validator: validatorCode }],
   }
+  // 切换微信登录界面
+  const changeScene = async () => {
+    scene.value = 1
+    let redirect_URL = encodeURIComponent(window.location.origin + "/wxlogin")
+    let result: WXLoginResponseData = await reqWxLogin(redirect_URL)
+    //生成微信扫码登录二维码页面
+    //@ts-ignore
+    new WxLogin({
+      self_redirect: true, //true:手机点击确认登录后可以在 iframe 内跳转到 redirect_uri
+      id: "login_container", //显示二维码容器设置
+      appid: result.data.appid, //应用位置标识appid
+      scope: "snsapi_login", //当前微信扫码登录页面已经授权了
+      redirect_uri: result.data.redirectUri, //填写授权回调域路径,就是用户授权成功以后，微信服务器向公司后台推送code地址
+      state: result.data.state, //state就是学校服务器重定向的地址携带用户信息
+      style: "black",
+      href: "",
+    })
+  }
+  //监听场景的数据
+  watch(
+    () => scene.value,
+    (val: number) => {
+      if (val === 1) {
+        userStore.queryState()
+      }
+    }
+  )
 </script>
 
 <style scoped lang="scss">
@@ -260,7 +308,11 @@
           align-items: center;
 
           p {
+            cursor: pointer;
             margin: 10px 0px;
+          }
+          svg {
+            cursor: pointer;
           }
         }
       }
