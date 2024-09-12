@@ -94,7 +94,7 @@
             <li
               v-for="item in deparment.children"
               :key="item.depcode"
-              @click="showLogin()"
+              @click="goReservation(item)"
             >
               {{ item.depname }}
             </li>
@@ -106,12 +106,15 @@
 </template>
 <script setup lang="ts">
   import { ref } from "vue"
-  // import { useRouter, useRoute } from "vue-router"
+  import { useRouter, useRoute } from "vue-router"
   //引入医院详情仓库的数据
   import { useHospitalInfoStore } from "@/store/hospitalInfo"
   import { useUserStore } from "@/store/user"
+  import { Deparment } from "@/api/type"
   const hospitalInfoStore = useHospitalInfoStore()
   const userStore = useUserStore()
+  const $router = useRouter()
+  const $route = useRoute()
 
   // 高亮导航的索引值
   const currentIndex = ref<number>(0)
@@ -123,9 +126,17 @@
     // 滚动到指定位置
     cur.value[currentIndex.value].scrollIntoView({ behavior: "smooth" })
   }
-  // 控制登录框的显示与隐藏
-  const showLogin = () => {
-    userStore.visiable = true
+  // 进入预约挂号页面
+  const goReservation = (item: Deparment) => {
+    console.log(item)
+    $router.push({
+      path: "/hospital/reservation_step1",
+      query: {
+        hoscode: $route.query.hoscode,
+        depcode: item.depcode,
+      },
+    })
+    userStore.visiable = false
   }
 </script>
 <style scoped lang="scss">

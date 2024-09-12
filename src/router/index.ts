@@ -38,7 +38,14 @@ export default createRouter({
           path: "search",
           component: () => import('@/pages/hospital/search/index.vue'),
           meta: { title: "查询" }
-        }
+        },
+        {
+          path: 'reservation_step1',
+          component: () => import('@/pages/hospital/reservation/register_step1.vue'),
+          meta: {
+            title: '预约第一步'
+          }
+        },
       ]
     },
     {

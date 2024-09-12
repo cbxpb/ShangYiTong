@@ -182,3 +182,70 @@ export interface WXLogin {
 export interface WXLoginResponseData extends ResponseData {
   data: WXLogin
 }
+
+/* ------------------------------------------------预约挂号相关------------------------------------------------ */
+// 预约挂号科室的介绍ts类型
+export interface BaseMap {
+  workDateString: string,
+  releaseTime: string,
+  bigname: string,
+  stopTime: string,
+  depname: string,
+  hosname: string,
+}
+
+// 预约挂号的时间ts类型
+export interface bookingSchedule {
+  workDate: string,
+  workDateMd: string,
+  dayOfWeek: string,
+  docCount: number,
+  reservedNumber: number,
+  availableNumber: number,
+  status: number,
+}
+// 存储全部预约挂号时间的ts类型
+export type BookingScheduleList = bookingSchedule[]
+// 预约挂号数据ts类型
+export interface workData {
+  total: number,
+  bookingScheduleList: BookingScheduleList,
+  baseMap: BaseMap
+}
+// 预约挂号接口返回的数据ts类型
+export interface HospitalWordResponseData extends ResponseData {
+  data: workData
+}
+
+// 每位医生信息ts类型
+export interface Doctor {
+  id: string,
+  createTime: string,
+  updateTime: string,
+  isDeleted: number,
+  param: {
+    dayOfWeek: string,
+    depname: string,
+    hosname: string,
+  }
+  hoscode: string,
+  depcode: string,
+  title: string,
+  docname: string,
+  skill: string,
+  workDate: string,
+  workTime: number,
+  reservedNumber: number,
+  availableNumber: number,
+  amount: number,
+  status: number,
+  hosScheduleId: string,
+}
+
+// 当天全部医生数据ts类型
+export type DoctorArr = Doctor[]
+
+// 医生排班接口返回的数据ts类型
+export interface DoctorResponseData extends ResponseData {
+  data: DoctorArr
+}

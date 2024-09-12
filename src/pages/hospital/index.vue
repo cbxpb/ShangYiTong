@@ -9,7 +9,7 @@
       </div>
       <el-menu :default-active="$route.path">
         <el-menu-item
-          index="/hospital/reservation"
+          :index="$route.path === '/hospital/reservation'?'/hospital/reservation':'/hospital/reservation_step1'"
           @click="changeActive('/hospital/reservation')"
         >
           <el-icon><icon-menu /></el-icon>
