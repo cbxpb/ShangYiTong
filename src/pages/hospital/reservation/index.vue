@@ -128,7 +128,6 @@
   }
   // 进入预约挂号页面
   const goReservation = (item: Deparment) => {
-    console.log(item)
     $router.push({
       path: "/hospital/reservation_step1",
       query: {

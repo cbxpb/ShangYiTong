@@ -51,6 +51,8 @@
         <span class="time">{{ workTime.workDate }}</span>
         <span class="willText">放号</span>
       </div>
+      <!-- 展示停止挂号的信息 -->
+      <div v-else-if="workTime.status === -1" class="stop">停止挂号</div>
       <!-- 展示医生的结构:上午、下午 -->
       <div class="doctor" v-else>
         <!-- 上午 -->
@@ -89,7 +91,12 @@
             <!-- 右侧区域展示挂号的钱数-->
             <div class="right">
               <div class="money">￥{{ doctor.amount }}</div>
-              <el-button type="primary" size="default">
+              <el-button
+                :disabled="doctor.availableNumber === 0"
+                type="primary"
+                size="default"
+                @click="goStep2(doctor)"
+              >
                 {{ doctor.availableNumber + "张" }}
               </el-button>
             </div>
@@ -171,7 +178,12 @@
             <!-- 右侧区域展示挂号的钱数-->
             <div class="right">
               <div class="money">￥{{ doctor.amount }}</div>
-              <el-button type="primary" size="default">
+              <el-button
+                :disabled="doctor.availableNumber === 0"
+                type="primary"
+                size="default"
+                @click="goStep2(doctor)"
+              >
                 {{ doctor.availableNumber + "张" }}
               </el-button>
             </div>
@@ -260,6 +272,16 @@
       return doc.workTime === 1
     })
   })
+  // 路由跳转进入到选择就诊人页面
+  const goStep2 = (doctor: Doctor) => {
+    $router.push({
+      path: "/hospital/reservation_step2",
+      query: {
+        hoscode: $route.query.hoscode,
+        docId: doctor.id,
+      },
+    })
+  }
 </script>
 
 <style scoped lang="scss">
@@ -335,6 +357,12 @@
         .willText {
           color: skyblue;
         }
+      }
+      .stop {
+        color: red;
+        text-align: center;
+        font-size: 30px;
+        font-weight: 900;
       }
       .doctor {
         .morning,

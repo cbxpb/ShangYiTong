@@ -46,6 +46,13 @@ export default createRouter({
             title: '预约第一步'
           }
         },
+        {
+          path: 'reservation_step2',
+          component: () => import('@/pages/hospital/reservation/register_step2.vue'),
+          meta: {
+            title: '预约第二步'
+          }
+        },
       ]
     },
     {

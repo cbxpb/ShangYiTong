@@ -249,3 +249,51 @@ export type DoctorArr = Doctor[]
 export interface DoctorResponseData extends ResponseData {
   data: DoctorArr
 }
+
+// 一位就诊人信息的ts类型
+export interface User {
+  id: number,
+  createTime: string,
+  updateTime: string,
+  isDeleted: number,
+  param: {
+    certificatesTypeString: string,
+    contactsCertificatesTypeString: string,
+    cityString: null,
+    fullAddress: string,
+    districtString: null,
+    provinceString: null
+  },
+  userId: number,
+  name: string,
+  certificatesType: string,
+  certificatesNo: string,
+  sex: number,
+  birthdate: string,
+  phone: string,
+  isMarry: number,
+  provinceCode: null,
+  cityCode: null,
+  districtCode: null,
+  address: string,
+  contactsName: string,
+  contactsCertificatesType: string,
+  contactsCertificatesNo: string,
+  contactsPhone: string,
+  isInsure: number,
+  cardNo: null,
+  status: string
+}
+
+// 账号下全部就诊人信息
+export type UserArr = User[]
+
+// 就诊人信息接口返回的数据ts类型
+export interface UserResponseData extends ResponseData {
+  data: UserArr
+}
+
+//获取某一个挂号医生数据详情
+export interface DoctorInfoResponseData extends ResponseData{
+  data:Doctor
+}

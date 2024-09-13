@@ -1,5 +1,5 @@
 import request from "@/utils/request"
-import { HospitalInfoResponseData, DeparmentResponseData, CodeResponseData, LoginResponseData, LoginData, WXLoginResponseData, HospitalWordResponseData, DoctorResponseData } from "./type"
+import { HospitalInfoResponseData, DeparmentResponseData, CodeResponseData, LoginResponseData, LoginData, WXLoginResponseData, HospitalWordResponseData, DoctorResponseData, UserResponseData, DoctorInfoResponseData } from "./type"
 
 
 enum API {
@@ -17,6 +17,10 @@ enum API {
   HOSPITAL_WORK_URL = '/hosp/hospital/auth/getBookingScheduleRule/',
   //获取医院某一个科室某一天相应医生排班的数据
   HOSPITAL_DOCTOR_URL = '/hosp/hospital/auth/findScheduleList/',
+  //获取某一个账号下就诊人的信息
+  GET_USER_URL = '/user/patient/auth/findAll',
+  //获取挂号医生的信息
+  GET_DOCTOR_URL = '/hosp/hospital/getSchedule/'
 }
 
 //获取医院详情信息的接口
@@ -39,3 +43,9 @@ export const reqHospitalWork = (page: number, limit: number, hoscode: string, de
 
 //获取医生排班的数据
 export const reqHospitalDoctor = (hoscode: string, depcode: string, workDate: string) => request.get<any, DoctorResponseData>(API.HOSPITAL_DOCTOR_URL + `${hoscode}/${depcode}/${workDate}`)
+
+// 获取某一个账号下就诊人的信息
+export const reqGetUser = () => request.get<any, UserResponseData>(API.GET_USER_URL)
+
+//获取挂号医生的信息
+export const reqDoctorInfo = (scheduleId: string) => request.get<any, DoctorInfoResponseData>(API.GET_DOCTOR_URL + scheduleId)
