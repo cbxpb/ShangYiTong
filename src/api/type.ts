@@ -293,7 +293,15 @@ export interface UserResponseData extends ResponseData {
   data: UserArr
 }
 
-//获取某一个挂号医生数据详情
+// 获取某一个挂号医生数据详情
 export interface DoctorInfoResponseData extends ResponseData{
   data:Doctor
+}
+
+
+/* ------------------------------------------------订单相关------------------------------------------------ */
+
+// 提交订单接口返回的数据的ts类型
+export interface SubmitOrderResponseData extends ResponseData {
+  data: number
 }

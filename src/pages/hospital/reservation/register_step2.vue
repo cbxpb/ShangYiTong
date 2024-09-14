@@ -85,6 +85,7 @@
         type="primary"
         size="default"
         :disabled="currentIndex === -1 ? true : false"
+        @click="submitOrder"
       >
         确认挂号
       </el-button>
@@ -97,15 +98,20 @@
   import Visitor from "./visitor.vue"
   import { ref, onMounted } from "vue"
   import { reqGetUser, reqDoctorInfo } from "@/api/hospital"
+  import { reqSubmitOrder } from "@/api/user"
   import {
     UserResponseData,
     UserArr,
     DoctorInfoResponseData,
     Doctor,
+    SubmitOrderResponseData,
   } from "@/api/type"
-  import { useRoute } from "vue-router"
+  import { useRoute, useRouter } from "vue-router"
+  import { ElMessage } from "element-plus"
   // 获取路由对象
   const $route = useRoute()
+  // 获取路由器对象
+  const $router = useRouter()
   // 存储就诊人信息
   const userArr = ref<UserArr>([])
   // 存储医生信息
@@ -138,6 +144,31 @@
   const changeIndex = (index: number) => {
     // 存储当前用户选中的就诊人信息索引值
     currentIndex.value = index
+  }
+  // 确定挂号按钮的回调
+  const submitOrder = async () => {
+    // 医院编号
+    let hoscode = doctor.value.hoscode
+    // 医生的ID
+    let scheduleId = doctor.value.id
+    // 就诊人的ID
+    let patientId = userArr.value[currentIndex.value].id
+    //提交订单
+    let res: SubmitOrderResponseData = await reqSubmitOrder(
+      hoscode,
+      scheduleId,
+      patientId
+    )
+    console.log(hoscode, scheduleId, patientId, res)
+    //提交订单成功
+    if (res.code == 200) {
+      $router.push({ path: "/user/order", query: { orderId: res.data } })
+    } else {
+      ElMessage({
+        type: "error",
+        message: res.message,
+      })
+    }
   }
 </script>
 
