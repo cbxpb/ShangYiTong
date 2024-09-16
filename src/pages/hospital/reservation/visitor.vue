@@ -6,8 +6,28 @@
         <span class="username">{{ user.name }}</span>
       </div>
       <div class="right">
-        <el-button circle type="primary" size="default" :icon="Edit">
+        <el-button
+          circle
+          type="primary"
+          size="default"
+          :icon="Edit"
+          @click="handler"
+        >
         </el-button>
+        <el-popconfirm
+          v-if="$route.path === '/user/patient'"
+          :title="`你确定要删除${user.name}`"
+          width="200px"
+        >
+          <template #reference>
+            <el-button
+              circle
+              type="danger"
+              size="default"
+              :icon="Delete"
+            ></el-button>
+          </template>
+        </el-popconfirm>
       </div>
     </div>
     <div class="bottom">
@@ -28,14 +48,26 @@
 </template>
 
 <script setup lang="ts">
-  import { Edit } from "@element-plus/icons-vue"
+  import { Edit, Delete } from "@element-plus/icons-vue"
   import { User } from "@/api/type"
+  import { useRoute } from "vue-router"
+  const $route = useRoute()
   //接受父组件传递过来的就诊人信息展示
   const props = defineProps<{
     user: User
     index: number
-    currentIndex: number
+    currentIndex?: number
   }>()
+  const $emit = defineEmits<{
+    (e: "changeScene", index?: number): void
+  }>()
+
+  // 相应就诊人组件修改按钮的回调
+  const handler = () => {
+    console.log(111)
+
+    $emit("changeScene")
+  }
 </script>
 
 <style scoped lang="scss">
