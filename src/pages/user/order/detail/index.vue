@@ -27,7 +27,7 @@
                 p-id="2390"
               ></path>
             </svg>
-            <span>xxx</span>
+            <span>{{ orderInfo.param?.orderStatusString }}</span>
           </div>
         </el-tag>
         <div class="right_info">
@@ -47,54 +47,68 @@
               <template #label>
                 <div class="cell-item">就诊人信息</div>
               </template>
-              xxx
+              {{ orderInfo.patientName }}
             </el-descriptions-item>
             <el-descriptions-item>
               <template #label>
                 <div class="cell-item">就诊日期</div>
               </template>
-              xxx
+              {{ orderInfo.reserveDate }}
             </el-descriptions-item>
             <el-descriptions-item>
               <template #label>
                 <div class="cell-item">就诊医院</div>
               </template>
-              xxx
+              {{ orderInfo.hosname }}
             </el-descriptions-item>
             <el-descriptions-item>
               <template #label>
                 <div class="cell-item">就诊科室</div>
               </template>
-              xxxx
+              {{ orderInfo.depname }}
             </el-descriptions-item>
             <el-descriptions-item>
               <template #label>
                 <div class="cell-item">医生职称</div>
               </template>
-              xxx
+              {{ orderInfo.title }}
             </el-descriptions-item>
             <el-descriptions-item>
               <template #label>
                 <div class="cell-item">医事服务费</div>
               </template>
-              <span style="color: red">xxx元</span>
+              <span style="color: red">{{ orderInfo.amount }}元</span>
             </el-descriptions-item>
             <el-descriptions-item>
               <template #label>
                 <div class="cell-item">挂号单号</div>
               </template>
-              xxx
+              {{ orderInfo.outTradeNo }}
             </el-descriptions-item>
             <el-descriptions-item>
               <template #label>
                 <div class="cell-item">挂号时间</div>
               </template>
-              xxx
+              {{ orderInfo.createTime }}
             </el-descriptions-item>
           </el-descriptions>
-          <div class="btn">
-            <el-button>取消预约</el-button>
-            <el-button type="primary" size="default">支付</el-button>
+          <div
+            class="btn"
+            v-if="orderInfo.orderStatus === 0 || orderInfo.orderStatus === 1"
+          >
+            <el-popconfirm title="确定取消预约吗?" @confirm="cancel">
+              <template #reference>
+                <el-button>取消预约</el-button>
+              </template>
+            </el-popconfirm>
+            <el-button
+              type="primary"
+              size="default"
+              v-if="orderInfo.orderStatus === 0"
+              @click="openDialog"
+            >
+              支付
+            </el-button>
           </div>
         </div>
         <div class="right">
@@ -108,10 +122,13 @@
               1.请确认就诊人信息是否准确，若填写错误将无法取号就诊，损失由本人承担；
             </p>
             <p style="color: red">
-              2.【取号】就诊当天需在xxx前
+              2.【取号】就诊当天需在{{ orderInfo.fetchTime }}前
               在医院取号，未取号视为爽约，该号不退不换；
             </p>
-            <p>3.【退号】在xxx前可在线退号 ，逾期将不可办理退号退费；</p>
+            <p>
+              3.【退号】在{{ orderInfo.quitTime }}前可在线退号
+              ，逾期将不可办理退号退费；
+            </p>
             <p>
               4.北京114预约挂号支持自费患者使用身份证预约，同时支持北京市医保患者使用北京社保卡在平台预约挂号。请于就诊当日，携带预约挂号所使用的有效身份证件到院取号；
             </p>
@@ -120,10 +137,132 @@
         </div>
       </div>
     </el-card>
+    <!-- 展示支付二维码的结构 -->
+    <el-dialog
+      v-model="dialogVisible"
+      title="微信支付"
+      width="400"
+      @close="close"
+    >
+      <!-- 支付需要使用的二维码图片 -->
+      <div class="qrocde">
+        <img :src="imgUrl" alt="支付" />
+        <p>请使用微信扫一扫</p>
+        <p>扫描二维码支付</p>
+      </div>
+      <!-- 对话框底部插槽传递结构 -->
+      <template #footer>
+        <el-button type="primary" size="default" @click="closeDialog">
+          关闭窗口
+        </el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+  import { onMounted, ref } from "vue"
+  import {
+    reqOrderInfo,
+    reqCancelOrder,
+    reqQrcode,
+    reqQueryPayState,
+  } from "@/api/user"
+  import type {
+    OrderResponseData,
+    OrderInfo,
+    QrCodeResponseData,
+    PayResltResponseData,
+  } from "@/api/type"
+  import { useRoute } from "vue-router"
+  import { ElMessage } from "element-plus"
+  // 生成二维码插件qrcode
+  // @ts-ignore
+  import QRCode from "qrcode"
+  // 定义所需数据
+  const $route = useRoute()
+  const orderInfo = ref<OrderInfo>({} as OrderInfo)
+  const dialogVisible = ref<boolean>(false)
+  const imgUrl = ref<string>("")
+  //存储定时器引用
+  const timer = ref<any>()
+  //组件挂载完毕
+  onMounted(() => {
+    getOrderInfo()
+  })
+
+  //获取订单详情的数据
+  const getOrderInfo = async () => {
+    let res: OrderResponseData = await reqOrderInfo(
+      $route.query.orderId as string
+    )
+    if (res.code == 200) {
+      orderInfo.value = res.data
+    }
+  }
+
+  //取消订单   订单状态有三种 orderStatus  -1  取消预约  0 预约但是没有支付  1 支付成功
+  const cancel = async () => {
+    try {
+      //取消预约成功
+      let res = await reqCancelOrder($route.query.orderId as string)
+      console.log(res)
+      //再次获取订单详情的数据
+      getOrderInfo()
+    } catch (error) {
+      ElMessage({
+        type: "error",
+        message: "取消预约失败",
+      })
+    }
+  }
+
+  // 点击支付按钮的回调
+  const openDialog = async () => {
+    // 展示对话框
+    dialogVisible.value = true
+    // 获取支付需要使用二维码信息
+    let res: QrCodeResponseData = await reqQrcode(
+      $route.query.orderId as string
+    )
+    console.log(res)
+    // 根据服务器返回二维码信息生成二维码图片
+    imgUrl.value = await QRCode.toDataURL(res.data.codeUrl)
+    // 询问服务器当前这笔交易的支付结果
+    // 需要每隔几秒询问服务器是否支付成功
+    timer.value = setInterval(async () => {
+      let result: PayResltResponseData = await reqQueryPayState(
+        $route.query.orderId as string
+      )
+      // 如果服务器返回的数据data:true,代表支付成功
+      if (result.data) {
+        // 关闭对话框
+        dialogVisible.value = false
+        // 提示信息
+        ElMessage({
+          type: "success",
+          message: "支付成功",
+        })
+        // 清除定时器
+        clearInterval(timer.value)
+        // 再次获取订单详情的数据
+        getOrderInfo()
+      }
+    }, 2000)
+  }
+
+  // 关闭窗口的回调
+  const closeDialog = () => {
+    // 关闭对话框,对话框隐藏
+    dialogVisible.value = false
+    // 清除定时器
+    clearInterval(timer.value)
+  }
+  // 对话框右上角关闭的叉子的回调
+  const close = () => {
+    clearInterval(timer.value)
+  }
+</script>
 
 <style scoped lang="scss">
   .box-card {
@@ -181,7 +320,7 @@
     }
   }
 
-  ::v-deep(.el-dialog__body) {
+  :deep(.el-dialog__body) {
     border-top: 1px solid #7f7f7f;
     border-bottom: 1px solid #7f7f7f;
   }

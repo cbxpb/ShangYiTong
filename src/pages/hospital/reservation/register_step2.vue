@@ -164,6 +164,9 @@
     if (res.code == 200) {
       $router.push({ path: "/user/order", query: { orderId: res.data } })
     } else {
+      // 接口挂了后测试
+      console.log(res, "接口挂了")
+      $router.push({ path: "/user/order", query: { orderId: "7249" } })
       ElMessage({
         type: "error",
         message: res.message,

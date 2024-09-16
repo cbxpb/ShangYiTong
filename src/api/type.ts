@@ -294,8 +294,8 @@ export interface UserResponseData extends ResponseData {
 }
 
 // 获取某一个挂号医生数据详情
-export interface DoctorInfoResponseData extends ResponseData{
-  data:Doctor
+export interface DoctorInfoResponseData extends ResponseData {
+  data: Doctor
 }
 
 
@@ -304,4 +304,58 @@ export interface DoctorInfoResponseData extends ResponseData{
 // 提交订单接口返回的数据的ts类型
 export interface SubmitOrderResponseData extends ResponseData {
   data: number
+}
+
+// 订单详情数据的ts类型
+export interface OrderInfo {
+  id: number,
+  createTime: string,
+  updateTime: string,
+  isDeleted: number,
+  param: {
+    orderStatusString: string
+  },
+  userId: number,
+  outTradeNo: string,
+  hoscode: string,
+  hosname: string,
+  depcode: string,
+  depname: string,
+  scheduleId: string,
+  title: string,
+  reserveDate: string,
+  reserveTime: number,
+  patientId: number,
+  patientName: string,
+  patientPhone: string,
+  hosRecordId: string,
+  number: number,
+  fetchTime: string,
+  fetchAddress: string,
+  amount: number,
+  quitTime: string,
+  orderStatus: number
+}
+
+// 订单接口返回的数据ts类型
+export interface OrderResponseData extends ResponseData {
+  data: OrderInfo
+}
+
+// 获取二维码接口的数据ts类型
+export interface PayInfo {
+  codeUrl: string,
+  orderId: number,
+  totalFee: number,
+  resultCode: string
+}
+
+// 获取二维码接口返回的数据ts类型
+export interface QrCodeResponseData extends ResponseData {
+  data: PayInfo
+}
+
+// 查询支付结果接口返回的ts数据类型
+export interface PayResltResponseData extends ResponseData {
+  data: boolean
 }
