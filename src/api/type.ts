@@ -359,3 +359,58 @@ export interface QrCodeResponseData extends ResponseData {
 export interface PayResltResponseData extends ResponseData {
   data: boolean
 }
+
+// 代表账号信息的数据类型
+export interface AccountInfo {
+  id: number,
+  createTime: string,
+  updateTime: string,
+  isDeleted: number,
+  param: {
+  },
+  openid: null,
+  nickName: null,
+  phone: string,
+  name: string,
+  certificatesType: string,
+  certificatesNo: string,
+  certificatesUrl: null,
+  authStatus: number,
+  status: number
+}
+
+// 获取账号信息接口返回的数据的ts类型
+export interface AccountInfoResponseData extends ResponseData {
+  data: AccountInfo
+}
+
+// 代表证件类型的数据ts类型
+export interface CertationType {
+  id: number,
+  createTime: string,
+  updateTime: string,
+  isDeleted: number,
+  param: {
+
+  },
+  parentId: number,
+  name: string,
+  value: string,
+  dictCode: string,
+  hasChildren: boolean
+}
+// 代表全部证件类型的数据ts类型
+export type CertationArr = CertationType[];
+
+// 获取证件类型接口返回的数据的ts类型
+export interface CertationTypeResponseData extends ResponseData {
+  data: CertationArr
+}
+
+// 用户认证需要携带的参数的ts类型
+export interface UserParams {
+  certificatesNo: string,
+  certificatesType: string,
+  certificatesUrl: string,
+  name: string
+}
