@@ -414,3 +414,33 @@ export interface UserParams {
   certificatesUrl: string,
   name: string
 }
+
+// 全部订单详情的ts类型
+export type Records = OrderInfo[]
+
+// 获取订单接口返回的数据的ts类型
+export interface UserOrderInfoResponseData extends ResponseData {
+  data: {
+    records: Records
+    total: number,
+    size: number,
+    current: number,
+    orders: [],
+    hitCount: boolean,
+    searchCount: boolean,
+    pages: number
+  }
+}
+
+// 订单状态ts类型
+export interface OrderState {
+  comment: string,
+  status: number
+}
+// 全部订单状态的ts类型
+export type AllOrderState = OrderState[]
+
+//获取订单状态的接口返回的数据ts类型
+export interface AllOrderStateResponseData extends ResponseData {
+  data: AllOrderState
+}

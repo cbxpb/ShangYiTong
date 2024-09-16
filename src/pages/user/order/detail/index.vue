@@ -161,7 +161,7 @@
 </template>
 
 <script setup lang="ts">
-  import { onMounted, ref } from "vue"
+  import { onMounted, ref, onBeforeUnmount } from "vue"
   import {
     reqOrderInfo,
     reqCancelOrder,
@@ -262,6 +262,10 @@
   const close = () => {
     clearInterval(timer.value)
   }
+  // 组件被销毁时清除定时器
+  onBeforeUnmount(() => {
+    clearInterval(timer.value)
+  })
 </script>
 
 <style scoped lang="scss">

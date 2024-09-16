@@ -1,5 +1,5 @@
 import request from "@/utils/request"
-import type { SubmitOrderResponseData, OrderResponseData, QrCodeResponseData, PayResltResponseData, AccountInfoResponseData, CertationTypeResponseData, UserParams } from "@/api/type"
+import type { SubmitOrderResponseData, OrderResponseData, QrCodeResponseData, PayResltResponseData, AccountInfoResponseData, CertationTypeResponseData, UserParams, UserOrderInfoResponseData, AllOrderStateResponseData } from "@/api/type"
 // 枚举地址
 enum API {
   // 提交订单,获取订单号码接口
@@ -18,6 +18,10 @@ enum API {
   CERTIFICATIONTYPE_URL = '/cmn/dict/findByDictCode/',
   // 用户认证的接口
   USER_CERTATION_URL = '/user/auth/userAuah',
+  // 获取用户订单的数据
+  USER_ORDERINFO_URL = '/order/orderInfo/auth/',
+  // 获取订单的状态
+  ORDER_STATE_URL = '/order/orderInfo/auth/getStatusList',
 }
 
 // 提交订单
@@ -38,8 +42,14 @@ export const reqQueryPayState = (orderId: string) => request.get<any, PayResltRe
 // 获取当前用户信息的接口
 export const reqUserInfo = () => request.get<any, AccountInfoResponseData>(API.USERINFO_URL)
 
-//获取证件类型的方法
+// 获取证件类型的方法
 export const reqCertationType = (CertificatesType = 'CertificatesType') => request.get<any, CertationTypeResponseData>(API.CERTIFICATIONTYPE_URL + CertificatesType)
 
-//用户认证接口
+// 用户认证接口
 export const reqUserCertation = (data: UserParams) => request.post<any, any>(API.USER_CERTATION_URL, data)
+
+// 获取订单数据接口
+export const reqUserOrderInfo = (page: number, limit: number, patientId: string, orderStatus: string) => request.get<any, UserOrderInfoResponseData>(API.USER_ORDERINFO_URL + `${page}/${limit}?patientId=${patientId}&orderStatus=${orderStatus}`)
+
+// 获取全部订单状态的接口
+export const reqOrderState = () => request.get<any, AllOrderStateResponseData>(API.ORDER_STATE_URL)
