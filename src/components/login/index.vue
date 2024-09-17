@@ -169,6 +169,10 @@
   import { ElMessage } from "element-plus"
   import CountDown from "./count_down/index.vue"
   import { LoginData, WXLoginResponseData } from "@/api/type"
+  import { useRouter, useRoute } from "vue-router"
+  // 获取路由器对象
+  const $router = useRouter()
+  const $route = useRoute()
   const userStore = useUserStore()
   const scene = ref<number>(0) //0代表收集号码登录  如果是1 微信扫码登录
   const loginParam = ref<LoginData>({
@@ -216,10 +220,17 @@
   // 手机号码登录回调
   const login = async () => {
     try {
-      //保证表单校验两项都符合条件
+      // 保证表单校验两项都符合条件
       await form.value.validate()
       await userStore.userLogin(loginParam.value)
       closeDialog()
+      // 获取url的query参数
+      let redirect = $route.query.redirect
+      if (redirect) {
+        $router.push(redirect as string)
+      } else {
+        $router.push("/home")
+      }
     } catch (error) {
       ElMessage({
         type: "error",

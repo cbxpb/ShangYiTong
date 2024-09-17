@@ -13,10 +13,12 @@ import Login from '@/components/login/index.vue'
 // 引入 Element Plus (全局引入)
 import ElementPlus from 'element-plus'
 // 引入中文语言包
-import zhCn from 'element-plus/es/locale/lang/zh-cn' 
+import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import 'element-plus/dist/index.css'
 // 引入 pinia 仓库
-import { createPinia } from 'pinia'
+import pinia from '@/store'
+//引入路由鉴权的文件
+import './permisstion'
 // 利用 createApp 方法创建一个应用实例，且将应用实例挂载到 #app 这个节点上
 const app = createApp(App)
 // 全局注册组件
@@ -26,9 +28,9 @@ app.component('Login', Login)
 // 使用路由
 app.use(router)
 // 使用 Element Plus
-app.use(ElementPlus,{
+app.use(ElementPlus, {
     locale: zhCn
 })
 // 使用 pinia
-app.use(createPinia())
+app.use(pinia)
 app.mount('#app')
