@@ -7,7 +7,7 @@
       <template #header>
         <div class="card-header">
           <span>请选择就诊人</span>
-          <el-button type="primary" size="default" :icon="User">
+          <el-button type="primary" size="default" :icon="User" @click="goUser">
             添加就诊人
           </el-button>
         </div>
@@ -161,7 +161,7 @@
     )
     console.log(hoscode, scheduleId, patientId, res)
     //提交订单成功
-    if (res.code == 200) {
+    if (res.code === 200) {
       $router.push({ path: "/user/order", query: { orderId: res.data } })
     } else {
       // 接口挂了后测试
@@ -172,6 +172,14 @@
         message: res.message,
       })
     }
+  }
+  // 预约挂号添加就诊人按钮的方法
+  const goUser = () => {
+    // 路由跳转
+    $router.push({
+      path: "/user/patient",
+      query: { type: "add" },
+    })
   }
 </script>
 

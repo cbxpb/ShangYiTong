@@ -25,31 +25,51 @@
       <el-divider content-position="left">就诊人信息</el-divider>
       <el-form style="width: 60%; margin: 10px auto">
         <el-form-item label="用户姓名">
-          <el-input placeholder="请输入用户姓名"></el-input>
+          <el-input
+            placeholder="请输入用户姓名"
+            v-model="userParams.name"
+          ></el-input>
         </el-form-item>
         <el-form-item label="证件类型">
-          <el-select placeholder="请选择证件类型" style="width: 100%">
-            <el-option label="xxx"></el-option>
+          <el-select
+            placeholder="请选择证件类型"
+            style="width: 100%"
+            v-model="userParams.certificatesType"
+          >
+            <el-option
+              v-for="item in certationArr"
+              :key="item.id"
+              :label="item.name"
+              :value="item.value"
+            >
+            </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="证件号码">
-          <el-input placeholder="请输入证件号码"></el-input>
+          <el-input
+            placeholder="请输入证件号码"
+            v-model="userParams.certificatesNo"
+          ></el-input>
         </el-form-item>
         <el-form-item label="用户性别">
-          <el-radio-group>
-            <el-radio :label="1">男</el-radio>
-            <el-radio :label="0">女</el-radio>
+          <el-radio-group v-model="userParams.sex">
+            <el-radio :value="1">男</el-radio>
+            <el-radio :value="0">女</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="出生日期">
           <el-date-picker
+            v-model="userParams.birthdate"
             value-format="YYYY-MM-DD"
             type="date"
             placeholder="请你选择日期"
           />
         </el-form-item>
         <el-form-item label="手机号码">
-          <el-input placeholder="请你输入用户手机号码"></el-input>
+          <el-input
+            placeholder="请你输入用户手机号码"
+            v-model="userParams.phone"
+          ></el-input>
         </el-form-item>
       </el-form>
       <el-divider content-position="left"
@@ -57,41 +77,69 @@
       >
       <el-form style="width: 60%; margin: 10px auto">
         <el-form-item label="婚姻状况">
-          <el-radio-group>
-            <el-radio :label="1">已婚</el-radio>
-            <el-radio :label="0">未婚</el-radio>
+          <el-radio-group v-model="userParams.isMarry">
+            <el-radio :value="1">已婚</el-radio>
+            <el-radio :value="0">未婚</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="自费/医保">
-          <el-radio-group>
-            <el-radio :label="1">自费</el-radio>
-            <el-radio :label="0">医保</el-radio>
+          <el-radio-group v-model="userParams.isInsure">
+            <el-radio :value="1">自费</el-radio>
+            <el-radio :value="0">医保</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="当前的住址"> xxx </el-form-item>
+        <el-form-item label="当前的住址">
+          <el-cascader :props="props" v-model="userParams.addressSelected" />
+        </el-form-item>
         <el-form-item label="详细地址">
-          <el-input placeholder="请输入用户详细地址"></el-input>
+          <el-input
+            placeholder="请输入用户详细地址"
+            v-model="userParams.address"
+          ></el-input>
         </el-form-item>
       </el-form>
       <el-divider content-position="left">联系人信息（选填）</el-divider>
       <el-form style="width: 60%; margin: 10px auto" label-width="80">
         <el-form-item label="用户姓名">
-          <el-input placeholder="请输入用户姓名"></el-input>
+          <el-input
+            placeholder="请输入用户姓名"
+            v-model="userParams.contactsName"
+          ></el-input>
         </el-form-item>
         <el-form-item label="证件类型">
-          <el-select placeholder="请选择证件类型" style="width: 100%">
-            <el-option label="item.name"></el-option>
+          <el-select
+            placeholder="请选择证件类型"
+            style="width: 100%"
+            v-model="userParams.contactsCertificatesType"
+          >
+            <el-option
+              v-for="item in certationArr"
+              :key="item.id"
+              :label="item.name"
+              :value="item.value"
+            >
+            </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="证件号码">
-          <el-input placeholder="请输入证件号码"></el-input>
+          <el-input
+            placeholder="请输入证件号码"
+            v-model="userParams.contactsCertificatesNo"
+          ></el-input>
         </el-form-item>
         <el-form-item label="手机号码">
-          <el-input placeholder="请输入用户手机号码"></el-input>
+          <el-input
+            placeholder="请输入用户手机号码"
+            v-model="userParams.contactsPhone"
+          ></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" size="default">提交</el-button>
-          <el-button type="primary" size="default">重写</el-button>
+          <el-button type="primary" size="default" @click="submit"
+            >提交</el-button
+          >
+          <el-button type="primary" size="default" @click="reset"
+            >重写</el-button
+          >
         </el-form-item>
       </el-form>
     </div>
@@ -101,29 +149,144 @@
 <script setup lang="ts">
   import Visitor from "@/pages/hospital/reservation/visitor.vue"
   import { User } from "@element-plus/icons-vue"
-  import { onMounted, ref } from "vue"
+  import { onMounted, ref, reactive } from "vue"
   import { reqGetUser } from "@/api/hospital"
-  import { UserResponseData, UserArr } from "@/api/type"
+  import { reqCertationType, reqCity, reqAddOrUpdateUser } from "@/api/user"
+  import {
+    UserResponseData,
+    UserArr,
+    CertationTypeResponseData,
+    CertationArr,
+    AddOrUpdateUser,
+  } from "@/api/type"
+  import type { CascaderProps } from "element-plus"
+  import { ElMessage } from "element-plus"
+  // 引入路由器与路由方法
+  import { useRouter, useRoute } from "vue-router"
+  const $route = useRoute()
+  const $router = useRouter()
   // 存储全部就诊人的信息
   const userArr = ref<UserArr>([])
   // 定义一个响应式数据:决定卡片的身体部分的展示内容
   const scene = ref<number>(0)
+  // 存储证件类型的数据
+  const certationArr = ref<CertationArr>([])
+  //收集新增就诊人的数据
+  const userParams = reactive<AddOrUpdateUser>({
+    name: "",
+    certificatesType: "",
+    certificatesNo: "",
+    sex: 0,
+    birthdate: "",
+    phone: "",
+    isMarry: 0,
+    isInsure: 0,
+    addressSelected: [],
+    address: "",
+    contactsName: "",
+    contactsCertificatesType: "",
+    contactsCertificatesNo: "",
+    contactsPhone: "",
+  })
   // 组件挂载完毕获取一次就诊人的信息
   onMounted(() => {
     // 获取就诊人信息
     getAllUser()
+    // 获取证件的类型的数据
+    getCertationType()
+    // 判断:当前这个路由组件是不是从挂号组件而来[挂号组件而来,路径上是携带query参数type=add]
+    if ($route.query.type === "add") {
+      scene.value = 1
+    }
+    if ($route.query.type === "edit") {
+      scene.value = 1
+    }
   })
   // 获取全部就诊人信息
   const getAllUser = async () => {
     let res: UserResponseData = await reqGetUser()
-    if (res.code == 200) {
+    if (res.code === 200) {
       userArr.value = res.data
     }
   }
+  //获取证件类型的接口
+  const getCertationType = async () => {
+    let res: CertationTypeResponseData = await reqCertationType()
+    if (res.code === 200) {
+      certationArr.value = res.data
+    }
+  }
+  // 级联选择器数据
+  const props: CascaderProps = {
+    lazy: true, // 懒加载数据
+    // 加载级联选择器数据方法
+    async lazyLoad(node: any, resolve: any) {
+      let res: any = await reqCity(node.data.id || "86")
+      //整理数据
+      let showData = res.data.map((item: any) => {
+        return {
+          id: item.id,
+          label: item.name,
+          value: item.value,
+          leaf: !item.hasChildren,
+        }
+      })
+      // 注入组件需要展示的数据
+      resolve(showData)
+    },
+  }
   // 添加就诊人按钮的回调
   const addUser = () => {
+    // 清空上一次的数据
+    reset()
     // 切换场景为1
     scene.value = 1
+  }
+  // 提交按钮的方法的回调
+  const submit = async () => {
+    // 要么新增就诊人|更新一个已有的就诊人
+    try {
+      // 要么新增用户成功|更新已有的用户成功
+      await reqAddOrUpdateUser(userParams)
+      // 提示文字
+      ElMessage({
+        type: "success",
+        message: userParams.id ? "更新成功" : "新增成功",
+      })
+      // 提交按钮的时候判断是不是从预约挂号而来
+      if ($route.query.type) {
+        $router.back()
+      } else {
+        scene.value = 0
+      }
+      // 再获取全部的就诊人的信息
+      getAllUser()
+    } catch (error) {
+      ElMessage({
+        type: "success",
+        message: userParams.id ? "更新失败" : "新增失败",
+      })
+    }
+  }
+  // 重置表格
+  const reset = () => {
+    Object.assign(userParams, {
+      id: null,
+      name: "",
+      certificatesType: "",
+      certificatesNo: "",
+      sex: 0,
+      birthdate: "",
+      phone: "",
+      isMarry: 0,
+      isInsure: 0,
+      addressSelected: [],
+      address: "",
+      contactsName: "",
+      contactsCertificatesType: "",
+      contactsCertificatesNo: "",
+      contactsPhone: "",
+    })
   }
   // 就诊人子组件自定义事件的回调
   const changeScene = () => {

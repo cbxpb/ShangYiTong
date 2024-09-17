@@ -444,3 +444,22 @@ export type AllOrderState = OrderState[]
 export interface AllOrderStateResponseData extends ResponseData {
   data: AllOrderState
 }
+
+//新增与修改已有的就诊人参数的数据ts类型
+export interface AddOrUpdateUser {
+  id?: string,
+  name: string,
+  certificatesType: string,
+  certificatesNo: string,
+  sex: number,
+  birthdate: string,
+  phone: string,
+  isMarry: number,
+  isInsure: number,
+  addressSelected: string[],
+  address: string,
+  contactsName: string,
+  contactsCertificatesType: string,
+  contactsCertificatesNo: string,
+  contactsPhone: string
+}
