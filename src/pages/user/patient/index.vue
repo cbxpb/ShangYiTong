@@ -18,6 +18,7 @@
         :user="user"
         :index="index"
         @changeScene="changeScene"
+        @removeUser="removeUser"
       />
     </div>
     <!-- 添加就诊人|修改已有的就诊人信息的结构 -->
@@ -306,6 +307,11 @@
       }
     }
   )
+  // 子组件自定义事件:删除按钮触发
+  const removeUser = () => {
+    // 再次获取全部的就诊人的信息
+    getAllUser()
+  }
 </script>
 
 <style scoped lang="scss">

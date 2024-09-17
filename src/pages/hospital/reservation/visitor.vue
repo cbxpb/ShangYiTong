@@ -16,6 +16,7 @@
         </el-button>
         <el-popconfirm
           v-if="$route.path === '/user/patient'"
+          @confirm="removeUser"
           :title="`你确定要删除${user.name}`"
           width="200px"
         >
@@ -51,6 +52,8 @@
   import { Edit, Delete } from "@element-plus/icons-vue"
   import { User } from "@/api/type"
   import { useRoute, useRouter } from "vue-router"
+  import { reqRemoveUser } from "@/api/user"
+  import { ElMessage } from "element-plus"
   const $route = useRoute()
   const $router = useRouter()
   //接受父组件传递过来的就诊人信息展示
@@ -61,6 +64,7 @@
   }>()
   const $emit = defineEmits<{
     (e: "changeScene", user: User): void
+    (e: "removeUser"): void
   }>()
 
   // 相应就诊人组件修改按钮的回调
@@ -75,6 +79,26 @@
         path: "/user/patient",
         query: { type: "edit", id: props.user.id },
       })
+    }
+  }
+  // 删除某一个用户
+  const removeUser = async () => {
+    try {
+      // 删除用户成功
+      await reqRemoveUser(props.user.id)
+      // 消息提示
+      ElMessage({
+        type: "success",
+        message: "删除成功",
+      })
+      $emit("removeUser")
+    } catch (error) {
+      // 消息提示
+      ElMessage({
+        type: "error",
+        message: "删除失败",
+      })
+      $emit("removeUser")
     }
   }
 </script>

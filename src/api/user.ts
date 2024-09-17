@@ -27,7 +27,9 @@ enum API {
   // 新增就诊人接口
   ADD_USER_URL = '/user/patient/auth/save',
   // 更新已有的就诊人接口
-  UPDATE_USER_URL = '/user/patient/auth/update'
+  UPDATE_USER_URL = '/user/patient/auth/update',
+  // 删除已有的就诊人
+  DELETE_USER_URL = '/user/patient/auth/remove/'
 }
 
 // 提交订单
@@ -71,3 +73,6 @@ export const reqAddOrUpdateUser = (data: AddOrUpdateUser) => {
     return request.post<any, any>(API.ADD_USER_URL, data);
   }
 }
+
+// 删除某一个就诊人的信息
+export const reqRemoveUser = (id: number) => request.delete<any, any>(API.DELETE_USER_URL + id)
