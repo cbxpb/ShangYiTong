@@ -149,7 +149,7 @@
 <script setup lang="ts">
   import Visitor from "@/pages/hospital/reservation/visitor.vue"
   import { User } from "@element-plus/icons-vue"
-  import { onMounted, ref, reactive } from "vue"
+  import { onMounted, ref, reactive, watch } from "vue"
   import { reqGetUser } from "@/api/hospital"
   import { reqCertationType, reqCity, reqAddOrUpdateUser } from "@/api/user"
   import {
@@ -289,9 +289,23 @@
     })
   }
   // 就诊人子组件自定义事件的回调
-  const changeScene = () => {
+  const changeScene = (user: any) => {
     scene.value = 1
+    // 收集已有的就诊人信息
+    Object.assign(userParams, user)
   }
+  // 监听全部就诊人的数据
+  watch(
+    () => userArr.value,
+    () => {
+      if ($route.query.type === "edit") {
+        let user = userArr.value.find((item: any) => {
+          return item.id == $route.query.id
+        })
+        Object.assign(userParams, user)
+      }
+    }
+  )
 </script>
 
 <style scoped lang="scss">

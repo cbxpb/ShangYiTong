@@ -50,8 +50,9 @@
 <script setup lang="ts">
   import { Edit, Delete } from "@element-plus/icons-vue"
   import { User } from "@/api/type"
-  import { useRoute } from "vue-router"
+  import { useRoute, useRouter } from "vue-router"
   const $route = useRoute()
+  const $router = useRouter()
   //接受父组件传递过来的就诊人信息展示
   const props = defineProps<{
     user: User
@@ -59,14 +60,22 @@
     currentIndex?: number
   }>()
   const $emit = defineEmits<{
-    (e: "changeScene", index?: number): void
+    (e: "changeScene", user: User): void
   }>()
 
   // 相应就诊人组件修改按钮的回调
   const handler = () => {
-    console.log(111)
-
-    $emit("changeScene")
+    // 要么是就诊人管理模块点击修改按钮
+    // 要么预约挂号点击修改按钮
+    if ($route.path === "/user/patient") {
+      $emit("changeScene", props.user)
+    } else {
+      // 路由跳转携带参数
+      $router.push({
+        path: "/user/patient",
+        query: { type: "edit", id: props.user.id },
+      })
+    }
   }
 </script>
 
